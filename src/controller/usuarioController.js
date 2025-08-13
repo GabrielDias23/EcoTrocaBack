@@ -5,7 +5,7 @@ const getAllUsariosHandler = async (req, res) => {
         const usuario = await getAllUsuarios();
         return res.status(200).json(usuario);
     }catch(error){
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     };
 };
 
@@ -13,9 +13,14 @@ const getUsuarioByIdHandler = async (req, res) => {
     const id = parseInt(req.params.id);
     try{
         const usuario = await getUsuarioById(id);
+
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuário não encontrado" });
+        };
+
         return res.status(200).json(usuario);
     }catch(error){
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     };
 };
 
@@ -26,7 +31,7 @@ const createUsuarioHandler = async (req, res) => {
         const usuario = await createUsuario(nome, email, senhaHash, cidade, estado, dataNasc, imgPerfil);
         return res.status(201).json(usuario);
     }catch(error){
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     };
 
 };
@@ -34,7 +39,7 @@ const createUsuarioHandler = async (req, res) => {
 const updateUsuarioHandler = async (req, res) => {
     const id = parseInt(req.params.id);
 
-    const{nome, email, senhaHash, cidade, estado, dataNasc, imgPerfil} = req.body;
+    const dadosParaAtualizar = req.body;
 
     if (!nome || !email || !senhaHash || !cidade || !estado || !dataNasc || !imgPerfil) {
         return res.status(400).json({error: "Faltando Dados"});
@@ -47,7 +52,7 @@ const updateUsuarioHandler = async (req, res) => {
         if(error.message === "Usuário não encontrado"){
             return res.status(404).json({error: "Usuário não encontrado"})
         }
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     }
 };
 
@@ -55,13 +60,13 @@ const deleteUsuarioHandler = async (req, res) => {
     const id = parseInt(req.params.id);
 
     try{
-        const usuario = await deleteUsuario(id);
-        return res.status(200).json({message: "Usuário deletado com sucesso"});
+        await deleteUsuario(id);
+        return res.status(204).send()
     }catch(error) {
         if (error.message === "Usuário não encontrado") {
             return res.status(404).json({error: "Usuário não encontrado"});
         }
-        res.status(500).json({error: "Erro ao deletar usuário"});
+        return res.status(500).json({error: error.message});
     };
 };
 

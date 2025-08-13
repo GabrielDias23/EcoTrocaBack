@@ -5,7 +5,7 @@ const getAllCategoriaHandler = async(req, res) => {
         const categoria = await getAllCategoria();
         return res.status(200).json(categoria);
     }catch(error){
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     };
 };
 
@@ -13,9 +13,14 @@ const getCategoriaByIdHandler = async(req, res) => {
     const id = parseInt(req.params.id);
     try{
         const categoria = await getCategoriaById(id);
+
+        if (!categoria) {
+            return res.status(404).json({ error: "Categoria não encontrada"});
+        };
+
         return res.status(200).json(categoria);
     }catch(error){
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     };
 };
 
@@ -30,7 +35,7 @@ const createCategoriaHandler = async(req, res) => {
         const categoria = await createCategoria(nome);
         return res.status(201).json(categoria);
     }catch(error){
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     };
 };
 
@@ -49,7 +54,7 @@ const updateCategoriaHandler = async(req, res) => {
         if(error.message === "Categoria não encontrada"){
             return res.status(404).json({error: "Categoria não encontrada"});
         }
-        res.status(500).json({error: error.message});
+        return res.status(500).json({error: error.message});
     };
 };
 
@@ -57,13 +62,13 @@ const deleteCategoriaHandler = async(req, res) => {
     const id = parseInt(req.params.id);
 
     try{
-        const categoria = await deleteCategoria(id);
-        res.status(200).json({message: "Categoria deletada com sucesso"});
+        await deleteCategoria(id);
+        res.status(204).send();
     }catch(error) {
         if (error.message === "Categoria não encontrada") {
             res.status(404).json({error: "Categoria não encontrada"});
         }
-        res.status(500).json({error: errror.message});
+        return res.status(500).json({error: errror.message});
     };
 };
 
