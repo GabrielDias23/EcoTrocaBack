@@ -60,7 +60,7 @@ const updateItemHandler = async (req, res) => {
         return res.status(200).json(item);
     } catch (error) {
         if (error.message === "Item não encontrado") {
-            return res.status(404).json({ error: error.message });
+            return res.status(404).json({ error: "Item não encontrado"});
         }
         return res.status(500).json({ error: error.message});
     }
