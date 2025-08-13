@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum StatusItem {
+  DISPONIVEL
+  NEGOCIANDO
+  INDISPONIVEL
+}
+
+enum StatusProposta {
+  PENDENTE
+  ACEITA
+  RECUSADA
+  CANCELADA
+}
+
+model Usuario {
+  id           Int        @id @default(autoincrement())
+  nome         String
+  email        String     @unique
+  senhaHash    String
+  cidade       String?
+  estado       String?
+  dataNasc     DateTime?
+  imgPerfil    String?
+  itens        Item[]
+  propostas    Proposta[] // propostas criadas
+  mensagens    Mensagem[]
+}
+
+model Categoria {
+  id       Int     @id @default(autoincrement())
+  nome     String
+  itens    Item[]
+}
+
+model Item {
+  id                Int          @id @default(autoincrement())
+  nome              String
+  descricao         String
+  cidade            String?
+  estado            String?
+  imagem            String?
+  dataPublicacao    DateTime     @default(now())
+  status            StatusItem   @default(DISPONIVEL)
+
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId  Int
+
+  categoria  Categoria @relation(fields: [categoriaId], references: [id])
+  categoriaId Int
+
+  propostasOferecidas Proposta[] @relation("ItemOferecido")
+  
+  propostasDesejadas  Proposta[] @relation("ItemDesejado")
+}
+
+model Proposta {
+  id              Int            @id @default(autoincrement())
+  dataProposta    DateTime       @default(now())
+  status          StatusProposta @default(PENDENTE)
+
+  autor           Usuario @relation(fields: [autorId], references: [id])
+  autorId         Int
+
+  itemOferecido   Item @relation("ItemOferecido", fields: [itemOferecidoId], references: [id])
+  itemOferecidoId Int
+
+  itemDesejado    Item @relation("ItemDesejado", fields: [itemDesejadoId], references: [id])
+  itemDesejadoId  Int
+
+  chat            Chat?
+}
+
+model Chat {
+  id         Int        @id @default(autoincrement())
+  proposta   Proposta?  @relation(fields: [propostaId], references: [id])
+  propostaId Int? @unique
+  mensagens  Mensagem[]
+}
+
+model Mensagem {
+  id        Int      @id @default(autoincrement())
+  conteudo  String
+  dataHora  DateTime @default(now())
+
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    Int
+}
