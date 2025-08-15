@@ -36,7 +36,8 @@ const getItemById = async (id) => {
     });
 };
 
-const createItem = async (nome, descricao, usuarioId, categoriaId, cidade, estado, imagem) => {
+const createItem = async (dadosItem) => {
+    const {nome, descricao, usuarioId, categoriaId, cidade, estado, imagem} = dadosItem;
     return prisma.Item.create({
         data: {
             nome: nome,
@@ -55,12 +56,6 @@ const createItem = async (nome, descricao, usuarioId, categoriaId, cidade, estad
 };
 
 const updateItem = async (id, dadosParaAtualizar) => {
-    const item = await getItemById(id);
-
-    if (!item) {
-        throw new Error("Item não encontrado");
-    }
-
     return prisma.Item.update({
         where: {
             id: id
@@ -70,12 +65,6 @@ const updateItem = async (id, dadosParaAtualizar) => {
 };
 
 const deleteItem = async (id) => {
-    const item = await getItemById(id);
-
-    if (!item) {
-        throw new Error("Item não encontrado");
-    }
-
     return prisma.Item.delete({
         where: {
             id: id
