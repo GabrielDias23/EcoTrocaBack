@@ -2,8 +2,8 @@ const {getAllCategoria, getCategoriaById, createCategoria, updateCategoria, dele
 
 const getAllCategoriaHandler = async(req, res) => {
     try{
-        const categoria = await getAllCategoria();
-        return res.status(200).json(categoria);
+        const categorias = await getAllCategoria();
+        return res.status(200).json(categorias);
     }catch(error){
         return res.status(500).json({error: error.message});
     };
@@ -11,6 +11,11 @@ const getAllCategoriaHandler = async(req, res) => {
 
 const getCategoriaByIdHandler = async(req, res) => {
     const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+        return res.status(400).json({error: "ID inválido."});
+    };
+
     try{
         const categoria = await getCategoriaById(id);
 
@@ -27,7 +32,7 @@ const getCategoriaByIdHandler = async(req, res) => {
 const createCategoriaHandler = async(req, res) => {
     const {nome} = req.body;
 
-    if(!nome) {
+    if(!nome || nome.trim() === '') {
         return res.status(400).json({error: "Faltando Dados"});
     }
 
@@ -43,7 +48,11 @@ const updateCategoriaHandler = async(req, res) => {
     const id = parseInt(req.params.id);
     const {nome} = req.body;
 
-    if (!nome) {
+    if (isNaN(id)) {
+        return res.status(400).json({error: "ID inválido."});
+    };
+
+    if (!nome || nome.trim() === '') {
         return res.status(400).json({error: "Faltando Dados"});
     };
 
@@ -51,7 +60,7 @@ const updateCategoriaHandler = async(req, res) => {
         const categoria = await updateCategoria(id, nome);
         return res.status(200).json(categoria);
     }catch(error){
-        if(error.message === "Categoria não encontrada"){
+        if (error.code === 'P2025') {
             return res.status(404).json({error: "Categoria não encontrada"});
         }
         return res.status(500).json({error: error.message});
@@ -61,14 +70,18 @@ const updateCategoriaHandler = async(req, res) => {
 const deleteCategoriaHandler = async(req, res) => {
     const id = parseInt(req.params.id);
 
+    if (isNaN(id)) {
+        return res.status(400).json({error: "ID inválido."});
+    }
+
     try{
         await deleteCategoria(id);
-        res.status(204).send();
+        return res.status(204).send();
     }catch(error) {
-        if (error.message === "Categoria não encontrada") {
-            res.status(404).json({error: "Categoria não encontrada"});
+        if (error.code === 'P2025') {
+            return res.status(404).json({error: "Categoria não encontrada"});
         }
-        return res.status(500).json({error: errror.message});
+        return res.status(500).json({error: error.message});
     };
 };
 

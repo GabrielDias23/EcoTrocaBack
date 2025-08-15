@@ -25,12 +25,6 @@ const createCategoria = async(nome) => {
 };
 
 const updateCategoria = async(id, nome) => {
-    const categoria = await getCategoriaById(id);
-
-    if(!categoria){
-        throw new Error("Categoria não encontrada");
-    };
-
     return prisma.Categoria.update({
         where: {
             id: id
@@ -42,12 +36,6 @@ const updateCategoria = async(id, nome) => {
 };
 
 const deleteCategoria = async(id) => {
-    const categoria = await getCategoriaById(id);
-
-    if(!categoria){
-        throw new Error("Categoria não encontrada");
-    };
-
     return prisma.Categoria.delete({
         where: {
             id: id
