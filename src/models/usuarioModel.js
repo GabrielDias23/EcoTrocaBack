@@ -5,7 +5,6 @@ const getAllUsuarios = async() =>{
         orderBy: {
             nome: 'desc'
         },
-        take: 10
     });
 };
 
@@ -17,50 +16,22 @@ const getUsuarioById = async(id) => {
     });
 };
 
-const createUsuario = async(nome, email, senhaHash, cidade, estado, dataNasc, imgPerfil) => {
+const createUsuario = async(dadosUsuario) => {
     return prisma.Usuario.create({
-        data: {
-            nome: nome,
-            email: email,
-            senhaHash: senhaHash,
-            cidade: cidade,
-            estado: estado,
-            dataNasc: dataNasc,
-            imgPerfil: imgPerfil
-        }
+        data: dadosUsuario
     });
 };
 
-const updateUsuario = async(id, nome, email, senhaHash, cidade, estado, dataNasc, imgPerfil) => {
-    const usuario = await getUsuarioById(id);
-
-    if(!usuario){
-        throw new Error("Usuário não encontrado");
-    };
-
+const updateUsuario = async(id, dadosUsuario) => {
     return prisma.Usuario.update({
         where: {
             id: id
         },
-        data: {
-            nome: nome,
-            email: email,
-            senhaHash: senhaHash,
-            cidade: cidade,
-            estado: estado,
-            dataNasc: dataNasc,
-            imgPerfil: imgPerfil
-        }
+        data: dadosUsuario
     });
 };
 
 const deleteUsuario = async(id) => {
-    const usuario = await getUsuarioById(id);
-
-    if(!usuario){
-        throw new Error("Usuário não encontrado");
-    };
-
     return prisma.Usuario.delete({
         where:{
             id:id
