@@ -40,7 +40,8 @@ const getPropostaById = async (id) => {
     });
 };
 
-const createProposta = async (autorId, itemOferecidoId, itemDesejadoId) => {
+const createProposta = async (dadosProposta) => {
+    const {autorId, itemOferecidoId, itemDesejadoId} = dadosProposta;
     return prisma.proposta.create({
         data: {
             autor: { connect: { id: autorId } },
@@ -51,12 +52,6 @@ const createProposta = async (autorId, itemOferecidoId, itemDesejadoId) => {
 };
 
 const updateProposta = async (id, dadosParaAtualizar) => {
-    const proposta = await getPropostaById(id);
-
-    if (!proposta) {
-        throw new Error("Proposta não encontrada");
-    }
-
     return prisma.proposta.update({
         where: {
             id: id
@@ -66,12 +61,6 @@ const updateProposta = async (id, dadosParaAtualizar) => {
 };
 
 const deleteProposta = async (id) => {
-    const proposta = await getPropostaById(id);
-
-    if (!proposta) {
-        throw new Error("Proposta não encontrada");
-    }
-
     return prisma.proposta.delete({
         where: {
             id: id
