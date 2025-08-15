@@ -24,7 +24,8 @@ const getMensagemById = async (id) => {
     });
 };
 
-const createMensagem = async (conteudo, usuarioId, chatId) => {
+const createMensagem = async (dadosMensagem) => {
+    const {conteudo, usuarioId, chatId} =dadosMensagem
     return prisma.mensagem.create({
         data: {
             conteudo: conteudo,
@@ -39,12 +40,6 @@ const createMensagem = async (conteudo, usuarioId, chatId) => {
 };
 
 const updateMensagem = async (id, dadosParaAtualizar) => {
-    const mensagem = await getMensagemById(id);
-
-    if (!mensagem) {
-        throw new Error("Mensagem não encontrada");
-    }
-
     return prisma.mensagem.update({
         where: { 
             id: id
@@ -54,12 +49,6 @@ const updateMensagem = async (id, dadosParaAtualizar) => {
 };
 
 const deleteMensagem = async (id) => {
-    const mensagem = await getMensagemById(id);
-
-    if (!mensagem) {
-        throw new Error("Mensagem não encontrada");
-    }
-    
     return prisma.mensagem.delete({ 
         where: { 
             id: id

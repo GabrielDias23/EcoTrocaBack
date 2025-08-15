@@ -39,12 +39,6 @@ const createChat = async (propostaId) => {
 };
 
 const deleteChat = async (id) => {
-    const chat = await getChatById(id);
-
-    if (!chat) {
-        throw new Error("Chat não encontrado");
-    }
-    
     return prisma.chat.delete({ 
         where: { 
             id: id
