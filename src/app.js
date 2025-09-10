@@ -9,7 +9,10 @@ const chatRouets = require('./routes/chatRoutes');
 const mensagemRoutes = require('./routes/mensagemRoutes');
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Permite requisições do frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+}));
 
 app.get('/', (req, res) => {
     res.send('EcoTrocaBack');
