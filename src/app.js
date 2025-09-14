@@ -8,11 +8,17 @@ const propostaRoutes = require('./routes/propostaRoutes');
 const chatRouets = require('./routes/chatRoutes');
 const mensagemRoutes = require('./routes/mensagemRoutes');
 
-app.use(express.json());
+// Apenas esta linha é necessária para o middleware JSON com limite.
+app.use(express.json({ limit: '50mb' }));
+// A linha abaixo é para dados de formulário, e também está correta.
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
 app.use(cors({
-    origin: 'http://localhost:5173', // Permite requisições do frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
+
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
     res.send('EcoTrocaBack');

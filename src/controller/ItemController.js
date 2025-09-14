@@ -1,4 +1,6 @@
 const { getAllItens, getItemById, createItem, updateItem, deleteItem} = require('../models/itemModel');
+const fs = require('fs').promises;
+const path = require('path');
 
 const getAllItensHandler = async (req, res) => {
     try {
@@ -29,24 +31,46 @@ const getItemByIdHandler = async (req, res) => {
     };
 };
 
-
 const createItemHandler = async (req, res) => {
-    const { nome, descricao, usuarioId, categoriaId} = req.body;
+    const { nome, descricao, categoriaId, usuarioId, imagemBase64, cidade, estado } = req.body;
 
-    if (!nome || !descricao || !usuarioId || !categoriaId) {
+    if (!nome || !descricao || !categoriaId || !usuarioId) {
         return res.status(400).json({ error: "Campos obrigatórios ausentes." });
     }
 
     try {
-        const item = await createItem(req.body);
-        return res.status(201).json(item);
-    } catch (error) {
-        if (error.code === 'P2025') {
-            return res.status(404).json({error: "Usuário ou categoria não encontrados"});
+        let urlImagem = null;
+        if (imagemBase64) {
+            const base64Data = imagemBase64.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+            const filename = `${Date.now()}-${usuarioId}.jpeg`;
+            
+            // Alteração chave: Usa path.join para criar um caminho absoluto,
+            // garantindo que o arquivo seja salvo na pasta 'uploads' do projeto
+            const imagePath = path.join(__dirname, '..', 'uploads', filename);
+            await fs.writeFile(imagePath, base64Data, 'base64');
+            
+            urlImagem = `/uploads/${filename}`;
         }
-        return res.status(500).json({ error: error.message});
+        
+        const dadosParaCriar = {
+            nome,
+            descricao,
+            categoriaId: parseInt(categoriaId),
+            usuarioId: parseInt(usuarioId),
+            imagem: urlImagem, 
+            cidade: cidade || null,
+            estado: estado || null,
+        };
+
+        const novoItem = await createItem(dadosParaCriar);
+
+        return res.status(201).json(novoItem);
+    } catch (error) {
+        console.error("Erro ao criar item:", error);
+        return res.status(500).json({ error: "Falha ao criar item. " + error.message });
     }
 };
+
 
 const updateItemHandler = async (req, res) => {
     const id = parseInt(req.params.id);
@@ -92,11 +116,12 @@ const deleteItemHandler = async (req, res) => {
         return res.status(204).send();
     } catch (error) {
         if (error.code === 'P2025') {
-            return res.status(404).json({ error: "Item não encontrado"});
+            return res.status(404).json({error: "Item não encontrado."})
         }
         return res.status(500).json({ error: error.message});
-    }
+    };
 };
+
 
 module.exports = {
     getAllItensHandler,
