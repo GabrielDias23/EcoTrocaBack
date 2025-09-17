@@ -7,6 +7,7 @@ const itemRoutes = require('./routes/itemRoutes');
 const propostaRoutes = require('./routes/propostaRoutes');
 const chatRouets = require('./routes/chatRoutes');
 const mensagemRoutes = require('./routes/mensagemRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // Apenas esta linha é necessária para o middleware JSON com limite.
 app.use(express.json({ limit: '50mb' }));
@@ -30,5 +31,6 @@ app.use('/api/item', itemRoutes);
 app.use('/api/proposta', propostaRoutes);
 app.use('/api/chat', chatRouets);
 app.use('/api/mensagem', mensagemRoutes);
+app.use('/api/auth', authRoutes);
 
 module.exports = app;

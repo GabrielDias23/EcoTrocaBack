@@ -27,6 +27,11 @@ enum StatusProposta {
   CANCELADA
 }
 
+enum TipoUsuario {
+  ADMIN
+  PADRAO
+}
+
 model Usuario {
   id           Int        @id @default(autoincrement())
   nome         String
@@ -36,6 +41,7 @@ model Usuario {
   estado       String?
   dataNasc     DateTime?
   imgPerfil    String?
+  tipoUsuario  TipoUsuario? @default(PADRAO)
   itens        Item[]
   propostas    Proposta[] // propostas criadas
   mensagens    Mensagem[]

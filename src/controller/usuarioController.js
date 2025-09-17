@@ -34,7 +34,7 @@ const getUsuarioByIdHandler = async (req, res) => {
 };
 
 const createUsuarioHandler = async (req, res) => {
-    const { nome, email, senha, cidade, estado, dataNasc, imgPerfilBase64 } = req.body;
+    const { nome, email, senha, cidade, estado, dataNasc, imgPerfilBase64, tipoUsuario } = req.body;
 
     if (!nome || !email || !senha || !cidade || !estado || !dataNasc) {
         return res.status(400).json({ error: "Nome, email, senha, cidade, estado e data de nascimento são obrigatórios." });
@@ -77,7 +77,8 @@ const createUsuarioHandler = async (req, res) => {
             cidade,
             estado,
             dataNasc: new Date(dataNasc),
-            imgPerfil: urlImagem
+            imgPerfil: urlImagem,
+            tipoUsuario
         };
 
         const novoUsuario = await createUsuario(dadosParaCriar);
