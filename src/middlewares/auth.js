@@ -1,12 +1,22 @@
 const jwt = require('jsonwebtoken');
 
-async function requireAuth (req, res, next) {
+function requireAuth (req, res, next) {
     const auth = req.headers.authorization || '';
 
-    const token = auth.startWith('Bearer ') ? auth.slice(7) : null;
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
     if (!token) {
         return res.status(401).json({error: 'Não autenticado'})
     };
+    try {
+
+        const payload = jwt.verify(token, process.env.JWT_SECRET)
+
+        req.usuario = payload;
+
+        next();
+    } catch (error) {
+        return res.status(401).json({error: 'token invalido'});
+    }
 };
 
 module.exports = {
