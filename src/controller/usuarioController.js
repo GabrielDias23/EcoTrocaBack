@@ -34,7 +34,7 @@ const getUsuarioByIdHandler = async (req, res) => {
 };
 
 const createUsuarioHandler = async (req, res) => {
-    const { nome, email, senha, cidade, estado, dataNasc, imgPerfilBase64, tipoUsuario } = req.body;
+    const { nome, email, senha, cidade, estado, dataNasc, imgPerfil, tipoUsuario } = req.body;
 
     if (!nome || !email || !senha || !cidade || !estado || !dataNasc) {
         return res.status(400).json({ error: "Nome, email, senha, cidade, estado e data de nascimento são obrigatórios." });
@@ -54,22 +54,8 @@ const createUsuarioHandler = async (req, res) => {
     }
 
     try {
-        const senhaHash = await bcrypt.hash(senha, 10);
-        
-        let urlImagem = null;
-        if (imgPerfilBase64) {
-            const base64Data = imgPerfilBase64.replace(/^data:image\/\w+;base64,/, '');
-        
-            const filename = `${Date.now()}-${email.split('@')[0]}.jpeg`;
-            const uploadDir = path.join(__dirname, '..', 'uploads');
+        const senhaHash = await bcrypt.hash(senha, 10);  
 
-            await fs.mkdir(uploadDir, { recursive: true });
-            
-            await fs.writeFile(path.join(uploadDir, filename), base64Data, 'base64');
-            urlImagem = `/uploads/${filename}`; 
-        }
-        
-        
         const dadosParaCriar = {
             nome,
             email,
@@ -77,7 +63,7 @@ const createUsuarioHandler = async (req, res) => {
             cidade,
             estado,
             dataNasc: new Date(dataNasc),
-            imgPerfil: urlImagem,
+            imgPerfil,
             tipoUsuario
         };
 

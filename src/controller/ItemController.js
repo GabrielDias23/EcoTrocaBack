@@ -32,32 +32,20 @@ const getItemByIdHandler = async (req, res) => {
 };
 
 const createItemHandler = async (req, res) => {
-    const { nome, descricao, categoriaId, usuarioId, imagemBase64, cidade, estado } = req.body;
+    const { nome, descricao, categoriaId, usuarioId, imagem, cidade, estado } = req.body;
 
     if (!nome || !descricao || !categoriaId || !usuarioId) {
         return res.status(400).json({ error: "Campos obrigatórios ausentes." });
     }
 
     try {
-        let urlImagem = null;
-        if (imagemBase64) {
-            const base64Data = imagemBase64.replace(/^data:([A-Za-z-+/]+);base64,/, '');
-            const filename = `${Date.now()}-${usuarioId}.jpeg`;
-            
-            // Alteração chave: Usa path.join para criar um caminho absoluto,
-            // garantindo que o arquivo seja salvo na pasta 'uploads' do projeto
-            const imagePath = path.join(__dirname, '..', 'uploads', filename);
-            await fs.writeFile(imagePath, base64Data, 'base64');
-            
-            urlImagem = `/uploads/${filename}`;
-        }
-        
+ 
         const dadosParaCriar = {
             nome,
             descricao,
             categoriaId: parseInt(categoriaId),
             usuarioId: parseInt(usuarioId),
-            imagem: urlImagem, 
+            imagem, 
             cidade: cidade || null,
             estado: estado || null,
         };

@@ -23,7 +23,7 @@ const getUsuarioById = async(id) => {
     });
 };
 
-const createUsuario = async(nome, email, senha, cidade, estado, dataNasc) => {
+const createUsuario = async(nome, email, senha, cidade, estado, dataNasc, imgPerfil) => {
     const senhaCrypt = await bcrypt.hash(senha, 10);
     return prisma.Usuario.create({
         data: {
@@ -32,7 +32,8 @@ const createUsuario = async(nome, email, senha, cidade, estado, dataNasc) => {
             senhaHash: senhaCrypt,
             cidade: cidade,
             estado: estado,
-            dataNasc: new Date(dataNasc)
+            dataNasc: new Date(dataNasc),
+            imgPerfil
         }
     });
 };

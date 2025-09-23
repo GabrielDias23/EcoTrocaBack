@@ -11,12 +11,12 @@ function signToken(usuario) {
             role: usuario.tipoUsuario,
         },
         process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
+        { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
     );
 };
 
 async function register(req, res) {
-    const { nome, email, senha, cidade, estado, dataNasc} = req.body;
+    const { nome, email, senha, cidade, estado, dataNasc, imgPerfil} = req.body;
 
     if (!nome || !dataNasc || !email || !senha || !cidade || !estado) {
         return res.status(400).json({ error: 'Campos obrigatórios faltando.' });
@@ -27,7 +27,7 @@ async function register(req, res) {
         return res.status(409).json({ error: 'Email já cadastrado.' });
     };
 
-    const novoUsuario = await createUsuario(nome, email, senha, cidade, estado, dataNasc);
+    const novoUsuario = await createUsuario(nome, email, senha, cidade, estado, dataNasc, imgPerfil);
     res.status(201).json({ message: "Usuário cadastrado com sucesso", novoUsuario });
 };
 
