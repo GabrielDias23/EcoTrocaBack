@@ -1,4 +1,4 @@
-const { getAllItens, getItemById, createItem, updateItem, deleteItem} = require('../models/itemModel');
+const { getAllItens, getItemById, createItem, updateItem, deleteItem, getItensByUsuarioId } = require('../models/itemModel');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -9,6 +9,22 @@ const getAllItensHandler = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: error.message });
     };
+};
+
+const getItensByUsuarioHandler = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const itensDoUsuario = await getItensByUsuarioId(id);
+
+        if (itensDoUsuario.length === 0) {
+            return res.status(404).json({ message: 'Nenhum item encontrado para este usuário.' });
+        }
+
+        res.status(200).json(itensDoUsuario);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 const getItemByIdHandler = async (req, res) => {
@@ -27,7 +43,7 @@ const getItemByIdHandler = async (req, res) => {
 
         return res.status(200).json(item);
     } catch (error) {
-        return res.status(500).json({ error: error.message});
+        return res.status(500).json({ error: error.message });
     };
 };
 
@@ -39,13 +55,13 @@ const createItemHandler = async (req, res) => {
     }
 
     try {
- 
+
         const dadosParaCriar = {
             nome,
             descricao,
             categoriaId: parseInt(categoriaId),
             usuarioId: parseInt(usuarioId),
-            imagem, 
+            imagem,
             cidade: cidade || null,
             estado: estado || null,
         };
@@ -76,8 +92,8 @@ const updateItemHandler = async (req, res) => {
         return typeof dados === 'string' && dados.trim() === '';
     });
 
-    if(testeValoresVazios){
-      return res.status(400).json({error : "Não pode conter campos vazios"});
+    if (testeValoresVazios) {
+        return res.status(400).json({ error: "Não pode conter campos vazios" });
     };
 
     try {
@@ -85,9 +101,9 @@ const updateItemHandler = async (req, res) => {
         return res.status(200).json(item);
     } catch (error) {
         if (error.code === 'P2025') {
-            return res.status(404).json({error: "Item não encontrado"})
+            return res.status(404).json({ error: "Item não encontrado" })
         }
-        return res.status(500).json({ error: error.message});
+        return res.status(500).json({ error: error.message });
     }
 };
 
@@ -104,9 +120,9 @@ const deleteItemHandler = async (req, res) => {
         return res.status(204).send();
     } catch (error) {
         if (error.code === 'P2025') {
-            return res.status(404).json({error: "Item não encontrado."})
+            return res.status(404).json({ error: "Item não encontrado." })
         }
-        return res.status(500).json({ error: error.message});
+        return res.status(500).json({ error: error.message });
     };
 };
 
@@ -116,5 +132,6 @@ module.exports = {
     getItemByIdHandler,
     createItemHandler,
     updateItemHandler,
-    deleteItemHandler
+    deleteItemHandler,
+    getItensByUsuarioHandler
 };

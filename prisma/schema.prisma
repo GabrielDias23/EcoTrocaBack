@@ -63,7 +63,7 @@ model Item {
   dataPublicacao    DateTime     @default(now())
   status            StatusItem   @default(DISPONIVEL)
 
-  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   usuarioId  Int
 
   categoria  Categoria @relation(fields: [categoriaId], references: [id])
@@ -79,7 +79,7 @@ model Proposta {
   dataProposta    DateTime       @default(now())
   status          StatusProposta @default(PENDENTE)
 
-  autor           Usuario @relation(fields: [autorId], references: [id])
+  autor           Usuario @relation(fields: [autorId], references: [id], onDelete: Cascade)
   autorId         Int
 
   itemOferecido   Item @relation("ItemOferecido", fields: [itemOferecidoId], references: [id])

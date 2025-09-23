@@ -12,6 +12,21 @@ const getAllUsariosHandler = async (req, res) => {
     };
 };
 
+const getUsuarioPerfilHandler = async (req, res) => {
+    const usuarioId = req.userId;
+    console.log("ID recebido no controller:", usuarioId);
+    console.log("Tipo de dado do ID:", typeof usuarioId);
+
+    const usuario = await getUsuarioById(usuarioId);
+
+    if (!usuario) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+    const { senhaHash, ...usuarioSemSenha } = usuario;
+
+    return res.json(usuarioSemSenha);
+}
+
 const getUsuarioByIdHandler = async (req, res) => {
     const id = parseInt(req.params.id);
 
@@ -48,13 +63,13 @@ const createUsuarioHandler = async (req, res) => {
     if (senha.length < 6) {
         return res.status(400).json({ error: "A senha deve ter no mínimo 6 caracteres." });
     }
-    
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dataNasc)) {
         return res.status(400).json({ error: "Data de nascimento inválida. Use o formato YYYY-MM-DD." });
     }
 
     try {
-        const senhaHash = await bcrypt.hash(senha, 10);  
+        const senhaHash = await bcrypt.hash(senha, 10);
 
         const dadosParaCriar = {
             nome,
@@ -68,7 +83,7 @@ const createUsuarioHandler = async (req, res) => {
         };
 
         const novoUsuario = await createUsuario(dadosParaCriar);
-        
+
         const { senhaHash: _, ...dados } = novoUsuario;
         return res.status(201).json(dados);
 
@@ -101,7 +116,7 @@ const updateUsuarioHandler = async (req, res) => {
 
     if (senha) {
         const senhaHash = await bcrypt.hash(senha, 10);
-        dadosAtualizacao.senhaHash = senhaHash; 
+        dadosAtualizacao.senhaHash = senhaHash;
     }
 
     try {
@@ -142,5 +157,6 @@ module.exports = {
     getUsuarioByIdHandler,
     createUsuarioHandler,
     updateUsuarioHandler,
-    deleteUsuarioHandler
+    deleteUsuarioHandler,
+    getUsuarioPerfilHandler
 };

@@ -36,8 +36,26 @@ const getItemById = async (id) => {
     });
 };
 
+const getItensByUsuarioId = async (usuarioId) => {
+    return prisma.item.findMany({
+        where: {
+            usuarioId: Number(usuarioId),
+        },
+        include: {
+            categoria: true,
+            usuario: {
+                select: {
+                    id: true,
+                    nome: true,
+                    email: true,
+                },
+            },
+        },
+    });
+};
+
 const createItem = async (dadosItem) => {
-    const {nome, descricao, usuarioId, categoriaId, cidade, estado, imagem} = dadosItem;
+    const { nome, descricao, usuarioId, categoriaId, cidade, estado, imagem } = dadosItem;
     return prisma.Item.create({
         data: {
             nome: nome,
@@ -77,5 +95,6 @@ module.exports = {
     getItemById,
     createItem,
     updateItem,
-    deleteItem
+    deleteItem,
+    getItensByUsuarioId
 };

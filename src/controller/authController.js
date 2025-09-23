@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const { getUsuarioByEmail, createUsuario } = require('../models/usuarioModel');
-const { createUsuarioHandler} = require('../controller/usuarioController')
 
 function signToken(usuario) {
     return jwt.sign(
